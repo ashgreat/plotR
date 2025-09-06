@@ -1,0 +1,97 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Gallery Inspired: US Cities Population Map</title>
+    <script src="https://unpkg.com/d3@7.9.0/dist/d3.min.js"></script>
+    <script src="https://unpkg.com/@observablehq/plot@0.6/dist/plot.umd.min.js"></script>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+            margin: 20px;
+            background-color: #fafafa;
+            line-height: 1.6;
+        }
+        .plot-container {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+            display: inline-block;
+            margin: 20px 0;
+        }
+        h1 { 
+            color: #2c3e50; 
+            margin-bottom: 10px; 
+            font-size: 28px;
+            font-weight: 600;
+        }
+        .subtitle { 
+            color: #7f8c8d; 
+            font-size: 16px; 
+            margin-bottom: 25px; 
+            font-style: italic; 
+        }
+        .footer {
+            margin-top: 30px;
+            color: #95a5a6;
+            font-size: 12px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <h1>Gallery Inspired: US Cities Population Map</h1>
+    <div class="subtitle">Interactive visualization created with plotR</div>
+    <div class="plot-container">
+        <div id="plot"></div>
+    </div>
+    <div class="footer">Powered by Observable Plot • Hover for details</div>
+    
+    <script>
+        function createPlot() {
+            if (typeof d3 === "undefined" || typeof Plot === "undefined") {
+                setTimeout(createPlot, 100);
+                return;
+            }
+            
+            const data = [{"city":"New York","population":8400000,"longitude":-74,"latitude":40.7},{"city":"Los Angeles","population":3900000,"longitude":-118.2,"latitude":34.1},{"city":"Chicago","population":2700000,"longitude":-87.6,"latitude":41.9},{"city":"Houston","population":2300000,"longitude":-95.4,"latitude":29.8},{"city":"Phoenix","population":1600000,"longitude":-112.1,"latitude":33.4},{"city":"Philadelphia","population":1600000,"longitude":-75.2,"latitude":39.9},{"city":"San Antonio","population":1500000,"longitude":-98.5,"latitude":29.4},{"city":"San Diego","population":1400000,"longitude":-117.2,"latitude":32.7},{"city":"Dallas","population":1300000,"longitude":-96.8,"latitude":32.8},{"city":"San Jose","population":1000000,"longitude":-121.9,"latitude":37.3}];
+            
+            try {
+                const plot = Plot.plot({
+                    marks: [
+                        
+    Plot.dot(data, {
+      x: "longitude",
+      y: "latitude", 
+      r: "population",
+      fill: "steelblue",
+      fillOpacity: 0.6,
+      stroke: "white",
+      strokeWidth: 1
+    }),
+    Plot.tip(data, Plot.pointer({
+      x: "longitude",
+      y: "latitude",
+      title: d => `${d.city || "Location"}\nPopulation: ${d.population.toLocaleString()}`
+    }))
+  
+                    ],
+                    "width":700,"height":500,"marginLeft":60,"marginBottom":50,"r":{"range":[5,30]},"x":{"label":"Longitude"},"y":{"label":"Latitude"}
+                });
+                
+                document.getElementById("plot").appendChild(plot);
+                console.log("plotR: Interactive plot created successfully!");
+                
+            } catch (error) {
+                console.error("plotR Error:", error);
+                document.getElementById("plot").innerHTML = 
+                    "<div style=\"color: red; padding: 20px;\">Error: " + error.message + "</div>";
+            }
+        }
+        
+        createPlot();
+    </script>
+</body>
+</html>

@@ -1,0 +1,80 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Plot Created with R</title>
+    <script src="https://unpkg.com/d3@7.9.0/dist/d3.min.js"></script>
+    <script src="https://unpkg.com/@observablehq/plot@0.6/dist/plot.umd.min.js"></script>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+            margin: 20px;
+            background-color: #fafafa;
+        }
+        .plot-container {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            display: inline-block;
+        }
+        h1 { color: #333; margin-bottom: 20px; }
+    </style>
+</head>
+<body>
+    <h1>Interactive Plot Created with R plotR Package</h1>
+    <div class="plot-container">
+        <div id="plot"></div>
+    </div>
+    
+    <script>
+        // Wait for libraries to load
+        function createPlot() {
+            if (typeof d3 === "undefined" || typeof Plot === "undefined") {
+                setTimeout(createPlot, 100);
+                return;
+            }
+            
+            console.log("Libraries loaded, creating plot...");
+            console.log("Available Plot functions:", Object.keys(Plot).filter(k => typeof Plot[k] === "function").slice(0, 10));
+            
+            // Data from R
+            const data = [{"cylinders":4,"avg_mpg":26.6636},{"cylinders":6,"avg_mpg":19.7429},{"cylinders":8,"avg_mpg":15.1}];
+            console.log("Data points:", data.length);
+            console.log("Sample data:", data.slice(0, 3));
+            
+            try {
+                // Create the plot with actual Plot marks
+                const plotSpec = Object.assign({
+                    marks: [Plot.barY(data, {x: "cylinders", y: "avg_mpg", fill: "orange"})]
+                }, {
+    grid: true,
+    width: 500,
+    height: 400,
+    marginLeft: 60,
+    marginBottom: 50,
+    x: {label: "Number of Cylinders"},
+    y: {label: "Average MPG"}
+  });
+                
+                console.log("Plot specification:", plotSpec);
+                
+                const plot = Plot.plot(plotSpec);
+                
+                // Add to page
+                document.getElementById("plot").appendChild(plot);
+                console.log("Plot created successfully!");
+                
+            } catch (error) {
+                console.error("Error creating plot:", error);
+                document.getElementById("plot").innerHTML = 
+                    "<div style=\"color: red; padding: 20px;\"><strong>Error:</strong> " + error.message + "<br><br>Check browser console for details.</div>";
+            }
+        }
+        
+        // Start creation
+        createPlot();
+    </script>
+</body>
+</html>

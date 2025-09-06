@@ -1,0 +1,39 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>US Livestock Population (millions of animals)</title>
+    <style>
+        body { font-family: sans-serif; padding: 20px; }
+        .isotype-row { margin: 20px 0; }
+        .isotype-label { font-weight: bold; margin-bottom: 10px; }
+        .isotype-icons { font-size: 30px; line-height: 1.2; }
+    </style>
+</head>
+<body>
+    <h1>US Livestock Population (millions of animals)</h1>
+    <div id="plot"></div>
+    <script>
+        const data = [{"animal":"Cattle","count_millions":94.4,"emoji":"🐄"},{"animal":"Sheep","count_millions":5.2,"emoji":"🐑"},{"animal":"Pigs","count_millions":71.3,"emoji":"🐖"},{"animal":"Chickens","count_millions":518.3,"emoji":"🐓"}];
+        const container = document.getElementById("plot");
+        
+        data.forEach(d => {
+          const row = document.createElement("div");
+          row.className = "isotype-row";
+          
+          const label = document.createElement("div");
+          label.className = "isotype-label";
+          label.textContent = d.animal;
+          row.appendChild(label);
+          
+          const icons = document.createElement("div");
+          icons.className = "isotype-icons";
+          const iconCount = Math.round(d.count_millions / 10); // Scale down for display
+          icons.textContent = (d.emoji + " ").repeat(iconCount);
+          row.appendChild(icons);
+          
+          container.appendChild(row);
+        });
+    </script>
+</body>
+</html>

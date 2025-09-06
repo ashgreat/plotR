@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Plot Library Version Check</title>
+    <script src="inst/htmlwidgets/lib/plot/plot.min.js"></script>
+    <style>
+        body { font-family: monospace; padding: 20px; line-height: 1.5; }
+        .info { color: blue; }
+        .error { color: red; }
+        .success { color: green; }
+    </style>
+</head>
+<body>
+    <h1>Plot Library Investigation</h1>
+    <div id="status"></div>
+    
+    <script>
+        const status = document.getElementById('status');
+        
+        function log(message, className = '') {
+            const p = document.createElement('p');
+            p.textContent = message;
+            if (className) p.className = className;
+            status.appendChild(p);
+            console.log(message);
+        }
+        
+        if (typeof Plot === 'undefined') {
+            log('Plot is not defined', 'error');
+        } else {
+            log('Plot object exists', 'success');
+            log('typeof Plot: ' + typeof Plot, 'info');
+            
+            // Check what properties Plot has
+            const plotProps = Object.keys(Plot).sort();
+            log('Plot has ' + plotProps.length + ' properties:', 'info');
+            
+            // List first 20 properties
+            plotProps.slice(0, 20).forEach(prop => {
+                const type = typeof Plot[prop];
+                log('  Plot.' + prop + ' = ' + type, 'info');
+            });
+            
+            if (plotProps.length > 20) {
+                log('  ... and ' + (plotProps.length - 20) + ' more', 'info');
+            }
+            
+            // Check for specific functions we need
+            const requiredFunctions = ['dot', 'line', 'barY', 'barX', 'area', 'plot'];
+            log('\\nChecking required functions:', 'info');
+            
+            requiredFunctions.forEach(fn => {
+                if (fn in Plot) {
+                    log('  ✓ Plot.' + fn + ' exists (' + typeof Plot[fn] + ')', 'success');
+                } else {
+                    log('  ✗ Plot.' + fn + ' is missing', 'error');
+                }
+            });
+            
+            // Try to identify the version
+            if (Plot.version) {
+                log('\\nPlot version: ' + Plot.version, 'info');
+            } else {
+                log('\\nNo version info found', 'info');
+            }
+            
+            // Check the constructor or prototype
+            log('\\nPlot constructor: ' + Plot.constructor.name, 'info');
+            log('Plot toString: ' + Plot.toString().substring(0, 100) + '...', 'info');
+        }
+    </script>
+</body>
+</html>

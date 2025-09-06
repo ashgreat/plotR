@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Minimal Widget Test</title>
+    <script src="inst/htmlwidgets/lib/d3/d3.min.js"></script>
+    <script src="inst/htmlwidgets/lib/plot/plot.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/htmlwidgets@1.6.2/www/htmlwidgets.js"></script>
+    <style>
+        body { font-family: sans-serif; padding: 20px; }
+        #status { margin-bottom: 20px; font-family: monospace; }
+        #testwidget { border: 2px solid #ccc; padding: 20px; min-height: 200px; }
+        .error { color: red; }
+        .success { color: green; }
+    </style>
+</head>
+<body>
+    <h1>Minimal Widget Test</h1>
+    <div id="status"></div>
+    <div id="testwidget" class="plotR html-widget" style="width:600px;height:400px;"></div>
+    
+    <script>
+        const status = document.getElementById('status');
+        function log(msg, type = '') {
+            status.innerHTML += '<div class="' + type + '">' + msg + '</div>';
+            console.log(msg);
+        }
+        
+        // Check dependencies first
+        log('Checking dependencies...', 'info');
+        log('D3: ' + (typeof d3 !== 'undefined' ? '✓ loaded' : '✗ missing'), typeof d3 !== 'undefined' ? 'success' : 'error');
+        log('Plot: ' + (typeof Plot !== 'undefined' ? '✓ loaded' : '✗ missing'), typeof Plot !== 'undefined' ? 'success' : 'error');
+        log('HTMLWidgets: ' + (typeof HTMLWidgets !== 'undefined' ? '✓ loaded' : '✗ missing'), typeof HTMLWidgets !== 'undefined' ? 'success' : 'error');
+        
+        if (typeof Plot !== 'undefined' && typeof Plot.dot === 'function') {
+            log('Plot.dot: ✓ available', 'success');
+        } else {
+            log('Plot.dot: ✗ missing', 'error');
+        }
+        
+        // Define our widget manually
+        if (typeof HTMLWidgets !== 'undefined') {
+            log('Registering plotR widget...', 'info');
+            
+            HTMLWidgets.widget({
+                name: 'plotR',
+                type: 'output',
+                factory: function(el, width, height) {
+                    return {
+                        renderValue: function(x) {
+                            log('renderValue called!', 'success');
+                            console.log('Widget data:', x);
+                            
+                            try {
+                                // Clear element
+                                el.innerHTML = '';
+                                
+                                // Get data
+                                const data = x.data || [];
+                                const spec = x.spec || {};
+                                
+                                log('Data points: ' + data.length, 'info');
+                                
+                                // Create basic plot
+                                const plot = Plot.plot({
+                                    marks: [
+                                        Plot.dot(data, {x: "speed", y: "dist", fill: "steelblue", r: 6})
+                                    ],
+                                    grid: true,
+                                    width: 500,
+                                    height: 300,
+                                    marginLeft: 50,
+                                    marginBottom: 40
+                                });
+                                
+                                el.appendChild(plot);
+                                log('Plot created and appended!', 'success');
+                                
+                            } catch (e) {
+                                log('Error in renderValue: ' + e.message, 'error');
+                                el.innerHTML = '<p style="color:red">Error: ' + e.message + '</p>';
+                            }
+                        }
+                    };
+                }
+            });
+            
+            // Create test data and render
+            setTimeout(() => {
+                log('Attempting manual render...', 'info');
+                
+                const testData = {
+                    x: {
+                        spec: {},
+                        data: [
+                            {speed: 4, dist: 2},
+                            {speed: 7, dist: 4},
+                            {speed: 8, dist: 16},
+                            {speed: 9, dist: 10},
+                            {speed: 10, dist: 18}
+                        ]
+                    }
+                };
+                
+                // Get the widget element
+                const el = document.getElementById('testwidget');
+                
+                // Try to find and call our widget factory
+                const widget = HTMLWidgets.find('#testwidget');
+                if (widget) {
+                    log('Found widget, calling renderValue...', 'info');
+                    widget.renderValue(testData.x);
+                } else {
+                    log('Widget not found, trying direct approach...', 'info');
+                    
+                    // Create widget instance manually
+                    const factory = HTMLWidgets.widgets.find(w => w.name === 'plotR');
+                    if (factory) {
+                        const instance = factory.factory(el, 600, 400);
+                        instance.renderValue(testData.x);
+                    } else {
+                        log('plotR widget factory not found!', 'error');
+                    }
+                }
+                
+            }, 1000);
+            
+        } else {
+            log('HTMLWidgets not available!', 'error');
+        }
+    </script>
+</body>
+</html>

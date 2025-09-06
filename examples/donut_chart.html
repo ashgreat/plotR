@@ -1,0 +1,45 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Website Traffic Sources</title>
+    <script src="https://unpkg.com/d3@7.9.0/dist/d3.min.js"></script>
+</head>
+<body>
+    <h1>Website Traffic Sources</h1>
+    <div id="plot"></div>
+    <script>
+        const data = [{"segment":"Desktop","percentage":45},{"segment":"Mobile","percentage":35},{"segment":"Tablet","percentage":15},{"segment":"Other","percentage":5}];
+        const width = 600;
+        const height = 400;
+        const radius = Math.min(width, height) / 2;
+        
+        const color = d3.scaleOrdinal(d3.schemeCategory10);
+        const pie = d3.pie().value(d => d.percentage);
+        const arc = d3.arc().innerRadius(radius * 0.4).outerRadius(radius);
+        
+        const svg = d3.select("#plot")
+          .append("svg")
+          .attr("width", width)
+          .attr("height", height)
+          .append("g")
+          .attr("transform", `translate(${width/2},${height/2})`);
+        
+        const arcs = svg.selectAll("arc")
+          .data(pie(data))
+          .enter()
+          .append("g");
+        
+        arcs.append("path")
+          .attr("d", arc)
+          .attr("fill", (d, i) => color(i))
+          .append("title")
+          .text(d => `${d.data.segment}: ${d.data.percentage}%`);
+        
+        arcs.append("text")
+          .attr("transform", d => `translate(${arc.centroid(d)})`)
+          .attr("text-anchor", "middle")
+          .text(d => d.data.segment);
+    </script>
+</body>
+</html>

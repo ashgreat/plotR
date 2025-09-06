@@ -1,0 +1,35 @@
+Package: plotR
+Type: Package
+Title: Interactive Data Visualization with Observable Plot
+Version: 1.0.0
+Date: 2025-01-06
+Authors@R: person("Ashish", "Kumar", 
+                  email = "ashgreat@example.com", 
+                  role = c("aut", "cre"))
+Maintainer: Ashish Kumar <ashgreat@example.com>
+Description: An R interface to Observable Plot, a JavaScript library for 
+    exploratory data visualization. Create expressive, interactive charts 
+    with a concise grammar of graphics including scatter plots, bar charts, 
+    line charts, pie charts, bubble maps, waffle charts, isotype charts, 
+    and grid choropleths. All charts include interactive tooltips and 
+    professional styling.
+License: MIT + file LICENSE
+URL: https://github.com/ashgreat/plotR
+BugReports: https://github.com/ashgreat/plotR/issues
+Encoding: UTF-8
+LazyData: false
+LazyLoad: no
+Depends:
+    R (>= 4.0.0)
+Imports:
+    htmltools,
+    jsonlite,
+    magrittr
+Suggests:
+    knitr,
+    rmarkdown,
+    testthat (>= 3.0.0),
+    dplyr
+RoxygenNote: 7.3.3
+VignetteBuilder: knitr
+Roxygen: list(markdown = TRUE)

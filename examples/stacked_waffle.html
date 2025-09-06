@@ -1,0 +1,92 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Employee Satisfaction by Department</title>
+    <script src="https://unpkg.com/d3@7.9.0/dist/d3.min.js"></script>
+    <script src="https://unpkg.com/@observablehq/plot@0.6/dist/plot.umd.min.js"></script>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+            margin: 20px;
+            background-color: #fafafa;
+            line-height: 1.6;
+        }
+        .plot-container {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+            display: inline-block;
+            margin: 20px 0;
+        }
+        h1 { 
+            color: #2c3e50; 
+            margin-bottom: 10px; 
+            font-size: 28px;
+            font-weight: 600;
+        }
+        .subtitle { 
+            color: #7f8c8d; 
+            font-size: 16px; 
+            margin-bottom: 25px; 
+            font-style: italic; 
+        }
+        .footer {
+            margin-top: 30px;
+            color: #95a5a6;
+            font-size: 12px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <h1>Employee Satisfaction by Department</h1>
+    <div class="subtitle">Interactive visualization created with plotR</div>
+    <div class="plot-container">
+        <div id="plot"></div>
+    </div>
+    <div class="footer">Powered by Observable Plot • Hover for details</div>
+    
+    <script>
+        function createPlot() {
+            if (typeof d3 === "undefined" || typeof Plot === "undefined") {
+                setTimeout(createPlot, 100);
+                return;
+            }
+            
+            const data = [{"department":"Sales","category":"Satisfied","count":45},{"department":"Sales","category":"Neutral","count":30},{"department":"Sales","category":"Dissatisfied","count":25},{"department":"Engineering","category":"Satisfied","count":60},{"department":"Engineering","category":"Neutral","count":20},{"department":"Engineering","category":"Dissatisfied","count":20},{"department":"Marketing","category":"Satisfied","count":40},{"department":"Marketing","category":"Neutral","count":35},{"department":"Marketing","category":"Dissatisfied","count":25},{"department":"Support","category":"Satisfied","count":55},{"department":"Support","category":"Neutral","count":25},{"department":"Support","category":"Dissatisfied","count":20}];
+            
+            try {
+                const plot = Plot.plot({
+                    marks: [
+                        
+    Plot.cell(data, {
+      x: "department",
+      fill: "category",
+      y: "count"
+    }),
+    Plot.tip(data, Plot.pointer({
+      x: "department",
+      title: d => `${d.department}\n${d.category}: ${d.count}`
+    }))
+  
+                    ],
+                    "width":600,"height":400,"marginLeft":80,"marginBottom":60,"color":{"scheme":"category10","legend":true},"x":{"label":"department"},"y":{"label":"count"}
+                });
+                
+                document.getElementById("plot").appendChild(plot);
+                console.log("plotR: Interactive plot created successfully!");
+                
+            } catch (error) {
+                console.error("plotR Error:", error);
+                document.getElementById("plot").innerHTML = 
+                    "<div style=\"color: red; padding: 20px;\">Error: " + error.message + "</div>";
+            }
+        }
+        
+        createPlot();
+    </script>
+</body>
+</html>

@@ -1,0 +1,237 @@
+---
+title: "Getting Started with plotR"
+author: "plotR Development Team"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Getting Started with plotR}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  eval = FALSE
+)
+```
+
+# Introduction to plotR
+
+plotR is an R interface to Observable Plot, a powerful JavaScript library for exploratory data visualization. This vignette will get you started with creating beautiful, interactive visualizations.
+
+## Installation
+
+```{r}
+# Install from GitHub
+devtools::install_github("yourusername/plotR")
+
+# Load the package
+library(plotR)
+```
+
+## Basic Concepts
+
+plotR follows the **grammar of graphics** principle, where visualizations are built by combining:
+
+- **Data**: Your R data frame
+- **Aesthetics**: Visual properties (x, y, color, size)
+- **Marks**: Geometric objects (dots, lines, bars)
+- **Interactivity**: Tooltips and hover effects
+
+## Your First Plot
+
+Let's create a simple scatter plot using the built-in `mtcars` dataset:
+
+```{r}
+library(plotR)
+
+# Basic scatter plot
+plotR_scatter(
+  data = mtcars,
+  x = "wt",           # Weight on x-axis
+  y = "mpg",          # Miles per gallon on y-axis
+  title = "Fuel Efficiency vs Weight",
+  save_as = "my_first_plot.html"
+)
+```
+
+This creates an interactive HTML file that you can open in any web browser.
+
+## Adding Visual Encoding
+
+Make your plots more informative by encoding additional variables:
+
+```{r}
+# Add color and size encoding
+plotR_scatter(
+  data = mtcars,
+  x = "wt", 
+  y = "mpg",
+  fill = "cyl",       # Color by number of cylinders
+  size = "hp",        # Size by horsepower
+  title = "Motor Cars: Multi-dimensional Analysis",
+  save_as = "enhanced_scatter.html"
+)
+```
+
+## Interactive Tooltips
+
+All plotR charts include interactive tooltips. Customize them with the `tooltip_template` parameter:
+
+```{r}
+plotR_scatter(
+  data = mtcars,
+  x = "wt", 
+  y = "mpg",
+  fill = "cyl",
+  tooltip_template = "🚗 Weight: ${d.wt * 1000} lbs\\n⛽ MPG: ${d.mpg}\\n🔧 ${d.cyl} cylinders",
+  save_as = "custom_tooltips.html"
+)
+```
+
+### Tooltip Syntax
+
+- Use `${d.column_name}` to reference data columns
+- Use `\\n` for line breaks
+- Include emojis and formatting for visual appeal
+- JavaScript expressions like `${d.wt * 1000}` are supported
+
+## Chart Types
+
+plotR supports various chart types:
+
+### Line Charts
+```{r}
+# Time series data
+sales_data <- data.frame(
+  year = 2015:2023,
+  revenue = c(100, 120, 140, 135, 160, 180, 170, 200, 220)
+)
+
+plotR_line(
+  data = sales_data,
+  x = "year",
+  y = "revenue",
+  title = "Revenue Growth",
+  save_as = "line_chart.html"
+)
+```
+
+### Bar Charts
+```{r}
+# Aggregate data first
+cyl_summary <- aggregate(mpg ~ cyl, data = mtcars, FUN = mean)
+
+plotR_bar(
+  data = cyl_summary,
+  x = "cyl",
+  y = "mpg",
+  title = "Average MPG by Cylinders",
+  save_as = "bar_chart.html"
+)
+```
+
+## Data Preparation
+
+plotR works best with tidy data. Use dplyr for data manipulation:
+
+```{r}
+library(dplyr)
+library(plotR)
+
+mtcars %>%
+  mutate(
+    efficiency = case_when(
+      mpg > 25 ~ "High",
+      mpg > 15 ~ "Medium", 
+      TRUE ~ "Low"
+    )
+  ) %>%
+  plotR_scatter(
+    x = "wt",
+    y = "mpg", 
+    fill = "efficiency",
+    title = "Fuel Efficiency Categories"
+  )
+```
+
+## Output Options
+
+plotR creates standalone HTML files that are:
+
+- **Portable**: Work in any web browser
+- **Interactive**: Include hover tooltips and responsive design
+- **Shareable**: Easy to email or host online
+- **Embeddable**: Can be included in R Markdown documents
+
+## Next Steps
+
+- Read the [Advanced Charts](advanced-charts.html) vignette for complex visualizations
+- Learn about [Customization](customization.html) for styling options
+- Explore [Interactivity](interactivity.html) for advanced tooltip techniques
+
+## Common Patterns
+
+### Faceting by Group
+```{r}
+# Create separate plots by transmission type
+manual_cars <- mtcars[mtcars$am == 1, ]
+auto_cars <- mtcars[mtcars$am == 0, ]
+
+plotR_scatter(manual_cars, "wt", "mpg", title = "Manual Transmission")
+plotR_scatter(auto_cars, "wt", "mpg", title = "Automatic Transmission")
+```
+
+### Combining with Statistical Functions
+```{r}
+# Add trend analysis
+library(broom)
+
+# Fit linear model and create prediction data
+model <- lm(mpg ~ wt, data = mtcars)
+pred_data <- data.frame(
+  wt = seq(min(mtcars$wt), max(mtcars$wt), length.out = 100)
+)
+pred_data$mpg <- predict(model, pred_data)
+
+# Plot original data
+plotR_scatter(
+  data = mtcars,
+  x = "wt", 
+  y = "mpg",
+  title = "Fuel Efficiency with Trend"
+)
+
+# Plot trend line separately
+plotR_line(
+  data = pred_data,
+  x = "wt",
+  y = "mpg", 
+  title = "Predicted Trend"
+)
+```
+
+## Troubleshooting
+
+**Q: My plot appears blank**
+A: Check that your data contains the specified column names and has no missing values in key columns.
+
+**Q: Tooltips don't appear**
+A: Ensure you're viewing the HTML file in a web browser, not just the source code.
+
+**Q: Colors don't show up**
+A: Make sure the `fill` parameter references a valid column name in your data.
+
+## Summary
+
+plotR makes it easy to create interactive, professional-quality visualizations with just a few lines of R code. The key concepts to remember:
+
+1. Start with clean, tidy data
+2. Map variables to visual aesthetics (x, y, fill, size)
+3. Choose the appropriate chart type
+4. Customize tooltips for interactivity
+5. Save as HTML for sharing and embedding
+
+Happy plotting! 📊✨

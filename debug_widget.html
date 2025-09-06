@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Debug Widget</title>
+    <!-- Load D3 first -->
+    <script src="inst/htmlwidgets/lib/d3/d3.min.js"></script>
+    <!-- Load Plot -->
+    <script src="inst/htmlwidgets/lib/plot/plot.min.js"></script>
+    <!-- Load htmlwidgets -->
+    <script src="https://cdn.jsdelivr.net/npm/htmlwidgets@1.6.2/www/htmlwidgets.js"></script>
+    <!-- Load our binding -->
+    <script src="inst/htmlwidgets/plotR.js"></script>
+    
+    <style>
+        body { font-family: monospace; padding: 20px; line-height: 1.5; }
+        .log { margin: 5px 0; }
+        .error { color: red; }
+        .success { color: green; }
+        .info { color: blue; }
+        #widget { border: 2px solid #ccc; padding: 20px; margin: 20px 0; min-height: 200px; }
+    </style>
+</head>
+<body>
+    <h1>Widget Debug Test</h1>
+    <div id="log"></div>
+    <div id="widget" class="plotR html-widget" style="width:600px;height:400px;"></div>
+    
+    <!-- Widget data -->
+    <script type="application/json" data-for="widget">{
+        "x": {
+            "spec": {
+                "marks": [{
+                    "type": "dot",
+                    "data": "@@data@@",
+                    "options": {"x": "speed", "y": "dist", "fill": "steelblue", "r": 6}
+                }],
+                "grid": true,
+                "width": 600,
+                "height": 400,
+                "marginLeft": 60,
+                "marginBottom": 50
+            },
+            "data": [
+                {"speed": 4, "dist": 2},
+                {"speed": 7, "dist": 4},
+                {"speed": 8, "dist": 16},
+                {"speed": 9, "dist": 10},
+                {"speed": 10, "dist": 18},
+                {"speed": 11, "dist": 17}
+            ]
+        }
+    }</script>
+    
+    <script>
+        const log = document.getElementById('log');
+        
+        function addLog(message, className = '') {
+            const div = document.createElement('div');
+            div.className = 'log ' + className;
+            div.textContent = message;
+            log.appendChild(div);
+            console.log(message);
+        }
+        
+        addLog('Starting debug test...', 'info');
+        
+        // Check all dependencies
+        if (typeof d3 === 'undefined') {
+            addLog('❌ D3 not loaded', 'error');
+        } else {
+            addLog('✅ D3 loaded (version: ' + (d3.version || 'unknown') + ')', 'success');
+        }
+        
+        if (typeof Plot === 'undefined') {
+            addLog('❌ Plot not loaded', 'error');
+        } else {
+            addLog('✅ Plot loaded', 'success');
+            addLog('Plot functions: ' + Object.keys(Plot).filter(k => typeof Plot[k] === 'function').slice(0, 5).join(', '), 'info');
+        }
+        
+        if (typeof HTMLWidgets === 'undefined') {
+            addLog('❌ HTMLWidgets not loaded', 'error');
+        } else {
+            addLog('✅ HTMLWidgets loaded', 'success');
+        }
+        
+        // Check if our widget factory is registered
+        if (window.HTMLWidgets && window.HTMLWidgets.widgets) {
+            const plotRWidget = window.HTMLWidgets.widgets.find(w => w.name === 'plotR');
+            if (plotRWidget) {
+                addLog('✅ plotR widget factory registered', 'success');
+            } else {
+                addLog('❌ plotR widget factory NOT registered', 'error');
+                addLog('Available widgets: ' + window.HTMLWidgets.widgets.map(w => w.name).join(', '), 'info');
+            }
+        }
+        
+        // Try to manually initialize
+        setTimeout(() => {
+            addLog('Attempting manual widget initialization...', 'info');
+            try {
+                if (window.HTMLWidgets && window.HTMLWidgets.staticRender) {
+                    window.HTMLWidgets.staticRender();
+                    addLog('✅ HTMLWidgets.staticRender() called', 'success');
+                } else {
+                    addLog('❌ HTMLWidgets.staticRender not available', 'error');
+                }
+            } catch (e) {
+                addLog('❌ Error in staticRender: ' + e.message, 'error');
+            }
+        }, 500);
+        
+        // Check if widget was processed
+        setTimeout(() => {
+            const widget = document.getElementById('widget');
+            if (widget.innerHTML.trim() === '') {
+                addLog('❌ Widget container is still empty', 'error');
+                
+                // Try direct Plot creation as fallback
+                addLog('Trying direct Plot creation...', 'info');
+                try {
+                    const data = [
+                        {speed: 4, dist: 2},
+                        {speed: 7, dist: 4},
+                        {speed: 8, dist: 16},
+                        {speed: 9, dist: 10}
+                    ];
+                    
+                    const plot = Plot.plot({
+                        marks: [
+                            Plot.dot(data, {x: "speed", y: "dist", fill: "steelblue", r: 6})
+                        ],
+                        grid: true,
+                        width: 600,
+                        height: 400,
+                        marginLeft: 60,
+                        marginBottom: 50
+                    });
+                    
+                    widget.appendChild(plot);
+                    addLog('✅ Direct Plot creation successful!', 'success');
+                } catch (e) {
+                    addLog('❌ Direct Plot creation failed: ' + e.message, 'error');
+                }
+            } else {
+                addLog('✅ Widget container has content!', 'success');
+            }
+        }, 2000);
+    </script>
+</body>
+</html>

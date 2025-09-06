@@ -1,0 +1,87 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Sales Growth Over Time</title>
+    <script src="https://unpkg.com/d3@7.9.0/dist/d3.min.js"></script>
+    <script src="https://unpkg.com/@observablehq/plot@0.6/dist/plot.umd.min.js"></script>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+            margin: 20px;
+            background-color: #fafafa;
+            line-height: 1.6;
+        }
+        .plot-container {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+            display: inline-block;
+            margin: 20px 0;
+        }
+        h1 { 
+            color: #2c3e50; 
+            margin-bottom: 10px; 
+            font-size: 28px;
+            font-weight: 600;
+        }
+        .subtitle { 
+            color: #7f8c8d; 
+            font-size: 16px; 
+            margin-bottom: 25px; 
+            font-style: italic; 
+        }
+        .footer {
+            margin-top: 30px;
+            color: #95a5a6;
+            font-size: 12px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <h1>Sales Growth Over Time</h1>
+    <div class="subtitle">Interactive visualization created with plotR</div>
+    <div class="plot-container">
+        <div id="plot"></div>
+    </div>
+    <div class="footer">Powered by Observable Plot • Hover for details</div>
+    
+    <script>
+        function createPlot() {
+            if (typeof d3 === "undefined" || typeof Plot === "undefined") {
+                setTimeout(createPlot, 100);
+                return;
+            }
+            
+            const data = [{"year":2010,"sales":94},{"year":2011,"sales":106},{"year":2012,"sales":132},{"year":2013,"sales":127},{"year":2014,"sales":137},{"year":2015,"sales":164},{"year":2016,"sales":163},{"year":2017,"sales":159},{"year":2018,"sales":178},{"year":2019,"sales":195},{"year":2020,"sales":228},{"year":2021,"sales":237},{"year":2022,"sales":256},{"year":2023,"sales":273}];
+            
+            try {
+                const plot = Plot.plot({
+                    marks: [
+                        Plot.line(data, {x: "year", y: "sales", stroke: "steelblue"}),
+    Plot.tip(data, Plot.pointer({
+    x: "year",
+    y: "sales",
+    title: d => `Year ${d.year}\nSales: $${d.sales}K`
+  }))
+                    ],
+                    "grid":true,"width":600,"height":400,"marginLeft":70,"marginBottom":60,"marginTop":40,"marginRight":40,"x":{"label":"year"},"y":{"label":"sales"}
+                });
+                
+                document.getElementById("plot").appendChild(plot);
+                console.log("plotR: Interactive plot created successfully!");
+                
+            } catch (error) {
+                console.error("plotR Error:", error);
+                document.getElementById("plot").innerHTML = 
+                    "<div style=\"color: red; padding: 20px;\">Error: " + error.message + "</div>";
+            }
+        }
+        
+        createPlot();
+    </script>
+</body>
+</html>

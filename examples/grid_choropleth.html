@@ -1,0 +1,102 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>State Population Change (2010-2020, %)</title>
+    <script src="https://unpkg.com/d3@7.9.0/dist/d3.min.js"></script>
+    <script src="https://unpkg.com/@observablehq/plot@0.6/dist/plot.umd.min.js"></script>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+            margin: 20px;
+            background-color: #fafafa;
+            line-height: 1.6;
+        }
+        .plot-container {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+            display: inline-block;
+            margin: 20px 0;
+        }
+        h1 { 
+            color: #2c3e50; 
+            margin-bottom: 10px; 
+            font-size: 28px;
+            font-weight: 600;
+        }
+        .subtitle { 
+            color: #7f8c8d; 
+            font-size: 16px; 
+            margin-bottom: 25px; 
+            font-style: italic; 
+        }
+        .footer {
+            margin-top: 30px;
+            color: #95a5a6;
+            font-size: 12px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <h1>State Population Change (2010-2020, %)</h1>
+    <div class="subtitle">Interactive visualization created with plotR</div>
+    <div class="plot-container">
+        <div id="plot"></div>
+    </div>
+    <div class="footer">Powered by Observable Plot • Hover for details</div>
+    
+    <script>
+        function createPlot() {
+            if (typeof d3 === "undefined" || typeof Plot === "undefined") {
+                setTimeout(createPlot, 100);
+                return;
+            }
+            
+            const data = [{"state":"AK","x":1,"y":8,"pop_change":-2.2},{"state":"AL","x":7,"y":5,"pop_change":1.7},{"state":"AR","x":6,"y":4,"pop_change":2.1},{"state":"AZ","x":4,"y":3,"pop_change":-2.3},{"state":"CA","x":2,"y":2,"pop_change":-0.9},{"state":"CO","x":5,"y":3,"pop_change":-0.1},{"state":"CT","x":10,"y":6,"pop_change":1.9},{"state":"DC","x":9,"y":6,"pop_change":1},{"state":"DE","x":10,"y":6,"pop_change":2.5},{"state":"FL","x":9,"y":7,"pop_change":1.6},{"state":"GA","x":8,"y":6,"pop_change":-1.3},{"state":"HI","x":1,"y":8,"pop_change":3.1},{"state":"IA","x":6,"y":4,"pop_change":2.5},{"state":"ID","x":3,"y":2,"pop_change":3.8},{"state":"IL","x":6,"y":4,"pop_change":-2.4},{"state":"IN","x":7,"y":4,"pop_change":4.4},{"state":"KS","x":5,"y":3,"pop_change":4},{"state":"KY","x":7,"y":4,"pop_change":1.3},{"state":"LA","x":6,"y":6,"pop_change":5.1},{"state":"MA","x":10,"y":6,"pop_change":3.6},{"state":"MD","x":9,"y":6,"pop_change":-0.4},{"state":"ME","x":10,"y":7,"pop_change":-2.9},{"state":"MI","x":7,"y":3,"pop_change":-2.4},{"state":"MN","x":6,"y":2,"pop_change":0.9},{"state":"MO","x":6,"y":4,"pop_change":0.4},{"state":"MS","x":7,"y":5,"pop_change":2.8},{"state":"MT","x":4,"y":2,"pop_change":-0.4},{"state":"NC","x":8,"y":5,"pop_change":-0.2},{"state":"ND","x":5,"y":2,"pop_change":3.5},{"state":"NE","x":5,"y":3,"pop_change":-1.7},{"state":"NH","x":10,"y":7,"pop_change":-0.6},{"state":"NJ","x":9,"y":6,"pop_change":-0.7},{"state":"NM","x":4,"y":3,"pop_change":-3.5},{"state":"NV","x":3,"y":2,"pop_change":1.1},{"state":"NY","x":9,"y":6,"pop_change":0.8},{"state":"OH","x":8,"y":4,"pop_change":4.1},{"state":"OK","x":5,"y":3,"pop_change":-0.8},{"state":"OR","x":2,"y":1,"pop_change":0.2},{"state":"PA","x":9,"y":5,"pop_change":-0.3},{"state":"RI","x":10,"y":6,"pop_change":0.4},{"state":"SC","x":8,"y":6,"pop_change":0.4},{"state":"SD","x":5,"y":2,"pop_change":1.3},{"state":"TN","x":7,"y":4,"pop_change":0},{"state":"TX","x":5,"y":4,"pop_change":0.7},{"state":"UT","x":4,"y":2,"pop_change":4.7},{"state":"VA","x":9,"y":5,"pop_change":0.7},{"state":"VT","x":10,"y":7,"pop_change":0.7},{"state":"WA","x":2,"y":1,"pop_change":2},{"state":"WI","x":7,"y":3,"pop_change":-1.9},{"state":"WV","x":8,"y":5,"pop_change":1.3},{"state":"WY","x":4,"y":2,"pop_change":-0.8}];
+            
+            try {
+                const plot = Plot.plot({
+                    marks: [
+                        
+    Plot.cell(data, {
+      x: "x",
+      y: "y",
+      fill: "pop_change",
+      stroke: "white",
+      strokeWidth: 2
+    }),
+    Plot.text(data, {
+      x: "x",
+      y: "y",
+      text: "state",
+      fill: "black",
+      fontSize: 12
+    }),
+    Plot.tip(data, Plot.pointer({
+      x: "x",
+      y: "y",
+      title: d => `${d.state}\nValue: ${(d.pop_change * 100).toFixed(1)}%`
+    }))
+  
+                    ],
+                    "width":600,"height":400,"marginLeft":40,"marginBottom":40,"color":{"scheme":"RdYlBu","type":"diverging","legend":true},"x":{"axis":{}},"y":{"axis":{},"reverse":true}
+                });
+                
+                document.getElementById("plot").appendChild(plot);
+                console.log("plotR: Interactive plot created successfully!");
+                
+            } catch (error) {
+                console.error("plotR Error:", error);
+                document.getElementById("plot").innerHTML = 
+                    "<div style=\"color: red; padding: 20px;\">Error: " + error.message + "</div>";
+            }
+        }
+        
+        createPlot();
+    </script>
+</body>
+</html>

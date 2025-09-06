@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Fresh Plot Library Test</title>
+    <script src="inst/htmlwidgets/lib/plot/plot.min.js"></script>
+    <style>
+        body { font-family: sans-serif; padding: 20px; }
+        .success { color: green; }
+        .error { color: red; }
+        .plot-area { 
+            border: 1px solid #ccc; 
+            padding: 20px; 
+            margin: 20px 0; 
+            background-color: #f9f9f9;
+        }
+    </style>
+</head>
+<body>
+    <h1>Fresh Plot Library Test</h1>
+    <div id="status"></div>
+    <div class="plot-area" id="plotArea">Plot will appear here...</div>
+    
+    <script>
+        const status = document.getElementById('status');
+        
+        function log(message, className = '') {
+            const p = document.createElement('p');
+            p.textContent = message;
+            if (className) p.className = className;
+            status.appendChild(p);
+        }
+        
+        log('Testing fresh Plot library...');
+        
+        if (typeof Plot === 'undefined') {
+            log('❌ Plot library not loaded', 'error');
+        } else {
+            log('✅ Plot library loaded', 'success');
+            
+            // Check for dot function specifically
+            if (typeof Plot.dot === 'function') {
+                log('✅ Plot.dot function exists', 'success');
+                
+                try {
+                    // Create a simple test plot
+                    const data = [
+                        {x: 1, y: 2},
+                        {x: 2, y: 4},
+                        {x: 3, y: 3},
+                        {x: 4, y: 5}
+                    ];
+                    
+                    const plot = Plot.plot({
+                        marks: [
+                            Plot.dot(data, {x: "x", y: "y", fill: "steelblue", r: 8})
+                        ],
+                        grid: true,
+                        width: 500,
+                        height: 300
+                    });
+                    
+                    const plotArea = document.getElementById('plotArea');
+                    plotArea.innerHTML = '';
+                    plotArea.appendChild(plot);
+                    
+                    log('✅ Plot created successfully!', 'success');
+                    
+                } catch (e) {
+                    log('❌ Error creating plot: ' + e.message, 'error');
+                }
+                
+            } else {
+                log('❌ Plot.dot function is missing', 'error');
+                log('Available Plot functions: ' + Object.keys(Plot).filter(k => typeof Plot[k] === 'function').join(', '));
+            }
+        }
+    </script>
+</body>
+</html>

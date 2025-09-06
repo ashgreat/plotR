@@ -1,0 +1,13 @@
+^.*\.Rproj$
+^\.Rproj\.user$
+^README\.md$
+^INSTALL_INSTRUCTIONS\.md$
+^fix_and_reinstall\.R$
+^install_package\.R$
+^build_and_test\.R$
+^test_plot\.R$
+^examples\.R$
+^simple_test\.html$
+^test.*\.html$
+^example.*\.html$
+\.DS_Store

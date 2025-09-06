@@ -1,0 +1,115 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Tech Stock Performance 2023 - Multi-Line Chart</title>
+    <script src="https://unpkg.com/d3@7.9.0/dist/d3.min.js"></script>
+    <script src="https://unpkg.com/@observablehq/plot@0.6/dist/plot.umd.min.js"></script>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+            margin: 0;
+            padding: 40px;
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 25px 50px rgba(0,0,0,0.2);
+            overflow: hidden;
+        }
+        .header {
+            padding: 40px 40px 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        h1 { 
+            margin: 0;
+            font-size: 32px;
+            font-weight: 700;
+        }
+        .subtitle { 
+            margin: 8px 0 0;
+            font-size: 18px; 
+            opacity: 0.9;
+        }
+        .plot-container {
+            padding: 40px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📈 Tech Stock Performance 2023</h1>
+            <div class="subtitle">Daily closing prices with interactive tooltips</div>
+        </div>
+        <div class="plot-container">
+            <div id="plot"></div>
+        </div>
+    </div>
+    
+    <script>
+        const data = [{"date":"2023-01-01","price":130,"company":"Apple"},{"date":"2023-01-08","price":136.62,"company":"Apple"},{"date":"2023-01-15","price":143.81,"company":"Apple"},{"date":"2023-01-22","price":136.93,"company":"Apple"},{"date":"2023-01-29","price":134.89,"company":"Apple"},{"date":"2023-02-05","price":138.66,"company":"Apple"},{"date":"2023-02-12","price":128.64,"company":"Apple"},{"date":"2023-02-19","price":127.77,"company":"Apple"},{"date":"2023-02-26","price":132.83,"company":"Apple"},{"date":"2023-03-05","price":130.44,"company":"Apple"},{"date":"2023-03-12","price":139.57,"company":"Apple"},{"date":"2023-03-19","price":138.73,"company":"Apple"},{"date":"2023-03-26","price":139.47,"company":"Apple"},{"date":"2023-04-02","price":143.82,"company":"Apple"},{"date":"2023-04-09","price":138.59,"company":"Apple"},{"date":"2023-04-16","price":144.76,"company":"Apple"},{"date":"2023-04-23","price":145.08,"company":"Apple"},{"date":"2023-04-30","price":141.2,"company":"Apple"},{"date":"2023-05-07","price":134.1,"company":"Apple"},{"date":"2023-05-14","price":128.21,"company":"Apple"},{"date":"2023-05-21","price":131.97,"company":"Apple"},{"date":"2023-05-28","price":130.21,"company":"Apple"},{"date":"2023-06-04","price":128,"company":"Apple"},{"date":"2023-06-11","price":125.11,"company":"Apple"},{"date":"2023-06-18","price":125.77,"company":"Apple"},{"date":"2023-06-25","price":130.06,"company":"Apple"},{"date":"2023-07-02","price":128.85,"company":"Apple"},{"date":"2023-07-09","price":128.28,"company":"Apple"},{"date":"2023-07-16","price":124.2,"company":"Apple"},{"date":"2023-07-23","price":128.49,"company":"Apple"},{"date":"2023-07-30","price":123.71,"company":"Apple"},{"date":"2023-08-06","price":126.06,"company":"Apple"},{"date":"2023-08-13","price":123.78,"company":"Apple"},{"date":"2023-08-20","price":125.51,"company":"Apple"},{"date":"2023-08-27","price":125.73,"company":"Apple"},{"date":"2023-09-03","price":127.17,"company":"Apple"},{"date":"2023-09-10","price":130.36,"company":"Apple"},{"date":"2023-09-17","price":126.54,"company":"Apple"},{"date":"2023-09-24","price":128.5,"company":"Apple"},{"date":"2023-10-01","price":126.71,"company":"Apple"},{"date":"2023-10-08","price":132.35,"company":"Apple"},{"date":"2023-10-15","price":136.27,"company":"Apple"},{"date":"2023-10-22","price":133.88,"company":"Apple"},{"date":"2023-10-29","price":131.72,"company":"Apple"},{"date":"2023-11-05","price":137.01,"company":"Apple"},{"date":"2023-11-12","price":131.75,"company":"Apple"},{"date":"2023-11-19","price":129.48,"company":"Apple"},{"date":"2023-11-26","price":132.15,"company":"Apple"},{"date":"2023-12-03","price":133.45,"company":"Apple"},{"date":"2023-12-10","price":127.33,"company":"Apple"},{"date":"2023-12-17","price":128.76,"company":"Apple"},{"date":"2023-12-24","price":129.42,"company":"Apple"},{"date":"2023-12-31","price":123.45,"company":"Apple"},{"date":"2023-01-07","price":240.74,"company":"Microsoft"},{"date":"2023-01-14","price":246.45,"company":"Microsoft"},{"date":"2023-01-21","price":258.81,"company":"Microsoft"},{"date":"2023-01-28","price":266.57,"company":"Microsoft"},{"date":"2023-02-04","price":271.01,"company":"Microsoft"},{"date":"2023-02-11","price":273.97,"company":"Microsoft"},{"date":"2023-02-18","price":269.17,"company":"Microsoft"},{"date":"2023-02-25","price":250.4,"company":"Microsoft"},{"date":"2023-03-04","price":254.98,"company":"Microsoft"},{"date":"2023-03-11","price":258.4,"company":"Microsoft"},{"date":"2023-03-18","price":251.01,"company":"Microsoft"},{"date":"2023-03-25","price":260.45,"company":"Microsoft"},{"date":"2023-04-01","price":255.89,"company":"Microsoft"},{"date":"2023-04-08","price":272.08,"company":"Microsoft"},{"date":"2023-04-15","price":280.29,"company":"Microsoft"},{"date":"2023-04-22","price":262.46,"company":"Microsoft"},{"date":"2023-04-29","price":255.51,"company":"Microsoft"},{"date":"2023-05-06","price":244.12,"company":"Microsoft"},{"date":"2023-05-13","price":249.1,"company":"Microsoft"},{"date":"2023-05-20","price":255.01,"company":"Microsoft"},{"date":"2023-05-27","price":246.66,"company":"Microsoft"},{"date":"2023-06-03","price":253.17,"company":"Microsoft"},{"date":"2023-06-10","price":263.58,"company":"Microsoft"},{"date":"2023-06-17","price":261.13,"company":"Microsoft"},{"date":"2023-06-24","price":258.64,"company":"Microsoft"},{"date":"2023-07-01","price":266.51,"company":"Microsoft"},{"date":"2023-07-08","price":272.72,"company":"Microsoft"},{"date":"2023-07-15","price":282.01,"company":"Microsoft"},{"date":"2023-07-22","price":271.84,"company":"Microsoft"},{"date":"2023-07-29","price":266,"company":"Microsoft"},{"date":"2023-08-05","price":271.72,"company":"Microsoft"},{"date":"2023-08-12","price":262.09,"company":"Microsoft"},{"date":"2023-08-19","price":260.16,"company":"Microsoft"},{"date":"2023-08-26","price":259.78,"company":"Microsoft"},{"date":"2023-09-02","price":267.81,"company":"Microsoft"},{"date":"2023-09-09","price":267.19,"company":"Microsoft"},{"date":"2023-09-16","price":278.89,"company":"Microsoft"},{"date":"2023-09-23","price":279.47,"company":"Microsoft"},{"date":"2023-09-30","price":288.35,"company":"Microsoft"},{"date":"2023-10-07","price":278.36,"company":"Microsoft"},{"date":"2023-10-14","price":267.2,"company":"Microsoft"},{"date":"2023-10-21","price":266.34,"company":"Microsoft"},{"date":"2023-10-28","price":268.88,"company":"Microsoft"},{"date":"2023-11-04","price":277.06,"company":"Microsoft"},{"date":"2023-11-11","price":272.14,"company":"Microsoft"},{"date":"2023-11-18","price":271.31,"company":"Microsoft"},{"date":"2023-11-25","price":260.29,"company":"Microsoft"},{"date":"2023-12-02","price":245.41,"company":"Microsoft"},{"date":"2023-12-09","price":240.29,"company":"Microsoft"},{"date":"2023-12-16","price":239.48,"company":"Microsoft"},{"date":"2023-12-23","price":237.3,"company":"Microsoft"},{"date":"2023-12-30","price":249.61,"company":"Microsoft"},{"date":"2023-01-06","price":88.91,"company":"Google"},{"date":"2023-01-13","price":89.01,"company":"Google"},{"date":"2023-01-20","price":83.65,"company":"Google"},{"date":"2023-01-27","price":78.81,"company":"Google"},{"date":"2023-02-03","price":79.74,"company":"Google"},{"date":"2023-02-10","price":78.71,"company":"Google"},{"date":"2023-02-17","price":78.42,"company":"Google"},{"date":"2023-02-24","price":78.01,"company":"Google"},{"date":"2023-03-03","price":74.65,"company":"Google"},{"date":"2023-03-10","price":77.16,"company":"Google"},{"date":"2023-03-17","price":74.17,"company":"Google"},{"date":"2023-03-24","price":74.46,"company":"Google"},{"date":"2023-03-31","price":72.97,"company":"Google"},{"date":"2023-04-07","price":72.01,"company":"Google"},{"date":"2023-04-14","price":69.58,"company":"Google"},{"date":"2023-04-21","price":67.97,"company":"Google"},{"date":"2023-04-28","price":66.7,"company":"Google"},{"date":"2023-05-05","price":64.9,"company":"Google"},{"date":"2023-05-12","price":65.6,"company":"Google"},{"date":"2023-05-19","price":66.19,"company":"Google"},{"date":"2023-05-26","price":69.01,"company":"Google"},{"date":"2023-06-02","price":68.72,"company":"Google"},{"date":"2023-06-09","price":72.38,"company":"Google"},{"date":"2023-06-16","price":76.02,"company":"Google"},{"date":"2023-06-23","price":82.03,"company":"Google"},{"date":"2023-06-30","price":80.69,"company":"Google"},{"date":"2023-07-07","price":83.18,"company":"Google"},{"date":"2023-07-14","price":82.79,"company":"Google"},{"date":"2023-07-21","price":80.38,"company":"Google"},{"date":"2023-07-28","price":80.96,"company":"Google"},{"date":"2023-08-04","price":77.63,"company":"Google"},{"date":"2023-08-11","price":75.13,"company":"Google"},{"date":"2023-08-18","price":76.59,"company":"Google"},{"date":"2023-08-25","price":80.25,"company":"Google"},{"date":"2023-09-01","price":81.97,"company":"Google"},{"date":"2023-09-08","price":87.62,"company":"Google"},{"date":"2023-09-15","price":82.34,"company":"Google"},{"date":"2023-09-22","price":91.35,"company":"Google"},{"date":"2023-09-29","price":93.73,"company":"Google"},{"date":"2023-10-06","price":96.89,"company":"Google"},{"date":"2023-10-13","price":93.48,"company":"Google"},{"date":"2023-10-20","price":87.83,"company":"Google"},{"date":"2023-10-27","price":92.92,"company":"Google"},{"date":"2023-11-03","price":92.21,"company":"Google"},{"date":"2023-11-10","price":89.27,"company":"Google"},{"date":"2023-11-17","price":83.75,"company":"Google"},{"date":"2023-11-24","price":85.53,"company":"Google"},{"date":"2023-12-01","price":89.21,"company":"Google"},{"date":"2023-12-08","price":83.77,"company":"Google"},{"date":"2023-12-15","price":85.99,"company":"Google"},{"date":"2023-12-22","price":80.25,"company":"Google"},{"date":"2023-12-29","price":76.58,"company":"Google"}];
+        
+        // Parse dates
+        data.forEach(d => {
+            d.date = new Date(d.date);
+        });
+        
+        const plot = Plot.plot({
+            marks: [
+                // Grid
+                Plot.gridY({strokeOpacity: 0.1}),
+                Plot.gridX({strokeOpacity: 0.1}),
+                
+                // Lines for each company
+                Plot.line(data, {
+                    x: "date",
+                    y: "price",
+                    stroke: "company",
+                    strokeWidth: 3,
+                    curve: "catmull-rom"
+                }),
+                
+                // Dots for interaction
+                Plot.dot(data, {
+                    x: "date", 
+                    y: "price",
+                    fill: "company",
+                    r: 4,
+                    title: d => `${d.company}\n📅 ${d.date.toLocaleDateString()}\n💰 $${d.price}`,
+                    opacity: 0.8
+                })
+            ],
+            width: 900,
+            height: 500,
+            x: {
+                label: "Date",
+                type: "time",
+                nice: true
+            },
+            y: {
+                label: "Stock Price (USD)",
+                grid: true,
+                tickFormat: d => `$${d}`
+            },
+            color: {
+                domain: ["Apple", "Microsoft", "Google"],
+                range: ["#007AFF", "#00D4FF", "#FF2D92"],
+                legend: true
+            },
+            marginTop: 40,
+            marginBottom: 60,
+            marginLeft: 80,
+            marginRight: 140
+        });
+        
+        document.getElementById("plot").appendChild(plot);
+    </script>
+</body>
+</html>

@@ -1,0 +1,112 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Using Plot.tip for Tooltips</title>
+    <script src="https://unpkg.com/d3@7.9.0/dist/d3.min.js"></script>
+    <script src="https://unpkg.com/@observablehq/plot@0.6/dist/plot.umd.min.js"></script>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+            margin: 20px;
+            background-color: #fafafa;
+        }
+        .plot-container {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            display: inline-block;
+            position: relative;
+        }
+        h1 { 
+            color: #333; 
+            margin-bottom: 20px; 
+            font-size: 24px;
+        }
+        .info {
+            color: #666;
+            font-size: 14px;
+            margin-bottom: 15px;
+            font-style: italic;
+        }
+        
+        /* Custom tooltip styles */
+        .plot-tooltip {
+            position: absolute;
+            background: rgba(0, 0, 0, 0.8);
+            color: white;
+            padding: 8px 12px;
+            border-radius: 4px;
+            font-size: 12px;
+            pointer-events: none;
+            white-space: pre-line;
+            z-index: 1000;
+        }
+    </style>
+</head>
+<body>
+    <h1>Using Plot.tip for Tooltips</h1>
+    <div class="info">Hover over data points to see details (tooltips enabled)</div>
+    <div class="plot-container">
+        <div id="plot"></div>
+    </div>
+    
+    <script>
+        function createPlot() {
+            if (typeof d3 === "undefined" || typeof Plot === "undefined") {
+                setTimeout(createPlot, 100);
+                return;
+            }
+            
+            console.log("Creating plot with tooltips...");
+            
+            // Data from R
+            const data = [{"speed":4,"dist":2},{"speed":4,"dist":10},{"speed":7,"dist":4},{"speed":7,"dist":22},{"speed":8,"dist":16},{"speed":9,"dist":10},{"speed":10,"dist":18},{"speed":10,"dist":26},{"speed":10,"dist":34},{"speed":11,"dist":17},{"speed":11,"dist":28},{"speed":12,"dist":14},{"speed":12,"dist":20},{"speed":12,"dist":24},{"speed":12,"dist":28}];
+            
+            try {
+                // Create the plot
+                const plotSpec = Object.assign({
+                    marks: [
+    Plot.dot(data, {
+      x: "speed", 
+      y: "dist", 
+      fill: "orange", 
+      r: 6,
+      stroke: "white",
+      strokeWidth: 1
+    }),
+    Plot.tip(data, Plot.pointer({
+      x: "speed",
+      y: "dist", 
+      title: (d) => `Speed: ${d.speed} mph\nStopping Distance: ${d.dist} ft`
+    }))
+  ]
+                }, {
+    grid: true,
+    width: 600,
+    height: 400,
+    marginLeft: 60,
+    marginBottom: 50,
+    x: {label: "Speed (mph)"},
+    y: {label: "Distance (ft)"}
+  });
+                
+                console.log("Plot spec:", plotSpec);
+                const plot = Plot.plot(plotSpec);
+                
+                document.getElementById("plot").appendChild(plot);
+                console.log("Plot with tooltips created!");
+                
+            } catch (error) {
+                console.error("Error:", error);
+                document.getElementById("plot").innerHTML = 
+                    "<div style=\"color: red; padding: 20px;\"><strong>Error:</strong> " + error.message + "</div>";
+            }
+        }
+        
+        createPlot();
+    </script>
+</body>
+</html>

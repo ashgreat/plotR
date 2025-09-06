@@ -1,0 +1,48 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Market Share Distribution</title>
+    <script src="https://unpkg.com/d3@7.9.0/dist/d3.min.js"></script>
+    <script src="https://unpkg.com/@observablehq/plot@0.6/dist/plot.umd.min.js"></script>
+</head>
+<body>
+    <h1>Market Share Distribution</h1>
+    <div id="plot"></div>
+    <script>
+        const data = [{"category":"Product A","value":35},{"category":"Product B","value":28},{"category":"Product C","value":22},{"category":"Product D","value":15}];
+        
+        // Create pie chart using d3 since Plot doesn't have native pie charts
+        const width = 600;
+        const height = 400;
+        const radius = Math.min(width, height) / 2;
+        
+        const color = d3.scaleOrdinal(d3.schemeCategory10);
+        const pie = d3.pie().value(d => d.value);
+        const arc = d3.arc().innerRadius(0).outerRadius(radius);
+        
+        const svg = d3.select("#plot")
+          .append("svg")
+          .attr("width", width)
+          .attr("height", height)
+          .append("g")
+          .attr("transform", `translate(${width/2},${height/2})`);
+        
+        const arcs = svg.selectAll("arc")
+          .data(pie(data))
+          .enter()
+          .append("g");
+        
+        arcs.append("path")
+          .attr("d", arc)
+          .attr("fill", (d, i) => color(i))
+          .append("title")
+          .text(d => `${d.data.category}: ${d.data.value}`);
+        
+        arcs.append("text")
+          .attr("transform", d => `translate(${arc.centroid(d)})`)
+          .attr("text-anchor", "middle")
+          .text(d => d.data.category);
+    </script>
+</body>
+</html>

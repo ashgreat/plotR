@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Plot Test with D3</title>
+    <!-- Load D3 first -->
+    <script src="https://cdn.jsdelivr.net/npm/d3@7.9.0/dist/d3.min.js"></script>
+    <!-- Then load Plot -->
+    <script src="inst/htmlwidgets/lib/plot/plot.min.js"></script>
+    <style>
+        body { font-family: sans-serif; padding: 20px; }
+        .success { color: green; }
+        .error { color: red; }
+        .info { color: blue; }
+        .plot-area { 
+            border: 1px solid #ccc; 
+            padding: 20px; 
+            margin: 20px 0; 
+            background-color: #f9f9f9;
+        }
+    </style>
+</head>
+<body>
+    <h1>Plot Test with D3 Library</h1>
+    <div id="status"></div>
+    <div class="plot-area" id="plotArea">Plot will appear here...</div>
+    
+    <script>
+        const status = document.getElementById('status');
+        
+        function log(message, className = '') {
+            const p = document.createElement('p');
+            p.textContent = message;
+            if (className) p.className = className;
+            status.appendChild(p);
+            console.log(message);
+        }
+        
+        log('Testing Plot with D3 dependency...', 'info');
+        
+        // Check D3
+        if (typeof d3 === 'undefined') {
+            log('❌ D3 library not loaded', 'error');
+        } else {
+            log('✅ D3 library loaded (version: ' + (d3.version || 'unknown') + ')', 'success');
+        }
+        
+        // Check Plot
+        if (typeof Plot === 'undefined') {
+            log('❌ Plot library not loaded', 'error');
+        } else {
+            log('✅ Plot library loaded', 'success');
+            
+            // List Plot properties
+            const plotProps = Object.keys(Plot);
+            log('Plot has ' + plotProps.length + ' properties', 'info');
+            
+            if (plotProps.length > 0) {
+                log('Plot properties: ' + plotProps.slice(0, 10).join(', ') + (plotProps.length > 10 ? '...' : ''), 'info');
+            }
+            
+            // Check specific functions
+            const required = ['dot', 'line', 'barY', 'plot'];
+            let allPresent = true;
+            
+            required.forEach(fn => {
+                if (typeof Plot[fn] === 'function') {
+                    log('✅ Plot.' + fn + ' is available', 'success');
+                } else {
+                    log('❌ Plot.' + fn + ' is missing', 'error');
+                    allPresent = false;
+                }
+            });
+            
+            if (allPresent) {
+                log('Attempting to create a test plot...', 'info');
+                
+                try {
+                    const data = [
+                        {x: 1, y: 2},
+                        {x: 2, y: 4},
+                        {x: 3, y: 3},
+                        {x: 4, y: 6},
+                        {x: 5, y: 4}
+                    ];
+                    
+                    const plot = Plot.plot({
+                        marks: [
+                            Plot.dot(data, {x: "x", y: "y", fill: "steelblue", r: 8})
+                        ],
+                        grid: true,
+                        width: 500,
+                        height: 300,
+                        marginLeft: 50,
+                        marginBottom: 40
+                    });
+                    
+                    const plotArea = document.getElementById('plotArea');
+                    plotArea.innerHTML = '';
+                    plotArea.appendChild(plot);
+                    
+                    log('✅ SUCCESS! Plot created and displayed!', 'success');
+                    
+                } catch (e) {
+                    log('❌ Error creating plot: ' + e.message, 'error');
+                    console.error(e);
+                }
+            }
+        }
+        
+        // Also test with a direct CDN version as fallback
+        setTimeout(() => {
+            if (document.getElementById('plotArea').innerHTML === 'Plot will appear here...') {
+                log('Trying CDN version as fallback...', 'info');
+                const script = document.createElement('script');
+                script.src = 'https://unpkg.com/@observablehq/plot@0.6/dist/plot.umd.min.js';
+                script.onload = () => {
+                    log('CDN Plot loaded, retrying...', 'info');
+                    // Retry the plot creation
+                };
+                document.head.appendChild(script);
+            }
+        }, 2000);
+    </script>
+</body>
+</html>

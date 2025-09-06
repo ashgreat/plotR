@@ -1,0 +1,112 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Multiple Tooltip Methods</title>
+    <script src="https://unpkg.com/d3@7.9.0/dist/d3.min.js"></script>
+    <script src="https://unpkg.com/@observablehq/plot@0.6/dist/plot.umd.min.js"></script>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+            margin: 20px;
+            background-color: #fafafa;
+        }
+        .plot-container {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            display: inline-block;
+            position: relative;
+        }
+        h1 { 
+            color: #333; 
+            margin-bottom: 20px; 
+            font-size: 24px;
+        }
+        .info {
+            color: #666;
+            font-size: 14px;
+            margin-bottom: 15px;
+            font-style: italic;
+        }
+        
+        /* Custom tooltip styles */
+        .plot-tooltip {
+            position: absolute;
+            background: rgba(0, 0, 0, 0.8);
+            color: white;
+            padding: 8px 12px;
+            border-radius: 4px;
+            font-size: 12px;
+            pointer-events: none;
+            white-space: pre-line;
+            z-index: 1000;
+        }
+    </style>
+</head>
+<body>
+    <h1>Multiple Tooltip Methods</h1>
+    <div class="info">Hover over data points to see details (tooltips enabled)</div>
+    <div class="plot-container">
+        <div id="plot"></div>
+    </div>
+    
+    <script>
+        function createPlot() {
+            if (typeof d3 === "undefined" || typeof Plot === "undefined") {
+                setTimeout(createPlot, 100);
+                return;
+            }
+            
+            console.log("Creating plot with tooltips...");
+            
+            // Data from R
+            const data = [{"mpg":21,"cyl":6,"disp":160,"hp":110,"drat":3.9,"wt":2.62,"qsec":16.46,"vs":0,"am":1,"gear":4,"carb":4,"_row":"Mazda RX4"},{"mpg":21,"cyl":6,"disp":160,"hp":110,"drat":3.9,"wt":2.875,"qsec":17.02,"vs":0,"am":1,"gear":4,"carb":4,"_row":"Mazda RX4 Wag"},{"mpg":22.8,"cyl":4,"disp":108,"hp":93,"drat":3.85,"wt":2.32,"qsec":18.61,"vs":1,"am":1,"gear":4,"carb":1,"_row":"Datsun 710"},{"mpg":21.4,"cyl":6,"disp":258,"hp":110,"drat":3.08,"wt":3.215,"qsec":19.44,"vs":1,"am":0,"gear":3,"carb":1,"_row":"Hornet 4 Drive"},{"mpg":18.7,"cyl":8,"disp":360,"hp":175,"drat":3.15,"wt":3.44,"qsec":17.02,"vs":0,"am":0,"gear":3,"carb":2,"_row":"Hornet Sportabout"},{"mpg":18.1,"cyl":6,"disp":225,"hp":105,"drat":2.76,"wt":3.46,"qsec":20.22,"vs":1,"am":0,"gear":3,"carb":1,"_row":"Valiant"},{"mpg":14.3,"cyl":8,"disp":360,"hp":245,"drat":3.21,"wt":3.57,"qsec":15.84,"vs":0,"am":0,"gear":3,"carb":4,"_row":"Duster 360"},{"mpg":24.4,"cyl":4,"disp":146.7,"hp":62,"drat":3.69,"wt":3.19,"qsec":20,"vs":1,"am":0,"gear":4,"carb":2,"_row":"Merc 240D"},{"mpg":22.8,"cyl":4,"disp":140.8,"hp":95,"drat":3.92,"wt":3.15,"qsec":22.9,"vs":1,"am":0,"gear":4,"carb":2,"_row":"Merc 230"},{"mpg":19.2,"cyl":6,"disp":167.6,"hp":123,"drat":3.92,"wt":3.44,"qsec":18.3,"vs":1,"am":0,"gear":4,"carb":4,"_row":"Merc 280"}];
+            
+            try {
+                // Create the plot
+                const plotSpec = Object.assign({
+                    marks: [
+    Plot.dot(data, {
+      x: "wt", 
+      y: "mpg", 
+      fill: "cyl",
+      r: 8,
+      title: d => `${d.cyl} cyl: ${d.mpg} mpg at ${d.wt} klbs`
+    }),
+    Plot.tip(data, Plot.pointer({
+      x: "wt",
+      y: "mpg",
+      title: d => `Weight: ${d.wt * 1000} lbs\nMPG: ${d.mpg}\nCylinders: ${d.cyl}`
+    }))
+  ]
+                }, {
+    grid: true,
+    width: 600,
+    height: 400,
+    marginLeft: 60,
+    marginBottom: 50,
+    color: {scheme: "category10", legend: true},
+    x: {label: "Weight (1000 lbs)"},
+    y: {label: "Miles per Gallon"}
+  });
+                
+                console.log("Plot spec:", plotSpec);
+                const plot = Plot.plot(plotSpec);
+                
+                document.getElementById("plot").appendChild(plot);
+                console.log("Plot with tooltips created!");
+                
+            } catch (error) {
+                console.error("Error:", error);
+                document.getElementById("plot").innerHTML = 
+                    "<div style=\"color: red; padding: 20px;\"><strong>Error:</strong> " + error.message + "</div>";
+            }
+        }
+        
+        createPlot();
+    </script>
+</body>
+</html>

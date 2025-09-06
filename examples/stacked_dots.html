@@ -1,0 +1,93 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Population Distribution by Age and Gender</title>
+    <script src="https://unpkg.com/d3@7.9.0/dist/d3.min.js"></script>
+    <script src="https://unpkg.com/@observablehq/plot@0.6/dist/plot.umd.min.js"></script>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+            margin: 20px;
+            background-color: #fafafa;
+            line-height: 1.6;
+        }
+        .plot-container {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+            display: inline-block;
+            margin: 20px 0;
+        }
+        h1 { 
+            color: #2c3e50; 
+            margin-bottom: 10px; 
+            font-size: 28px;
+            font-weight: 600;
+        }
+        .subtitle { 
+            color: #7f8c8d; 
+            font-size: 16px; 
+            margin-bottom: 25px; 
+            font-style: italic; 
+        }
+        .footer {
+            margin-top: 30px;
+            color: #95a5a6;
+            font-size: 12px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <h1>Population Distribution by Age and Gender</h1>
+    <div class="subtitle">Interactive visualization created with plotR</div>
+    <div class="plot-container">
+        <div id="plot"></div>
+    </div>
+    <div class="footer">Powered by Observable Plot • Hover for details</div>
+    
+    <script>
+        function createPlot() {
+            if (typeof d3 === "undefined" || typeof Plot === "undefined") {
+                setTimeout(createPlot, 100);
+                return;
+            }
+            
+            const data = [{"age":20,"gender":"Male","count":1037},{"age":25,"gender":"Male","count":819},{"age":30,"gender":"Male","count":886},{"age":35,"gender":"Male","count":888},{"age":40,"gender":"Male","count":840},{"age":45,"gender":"Male","count":764},{"age":50,"gender":"Male","count":901},{"age":55,"gender":"Male","count":716},{"age":60,"gender":"Male","count":902},{"age":65,"gender":"Male","count":669},{"age":70,"gender":"Male","count":780},{"age":75,"gender":"Male","count":854},{"age":80,"gender":"Male","count":461},{"age":20,"gender":"Female","count":925},{"age":25,"gender":"Female","count":913},{"age":30,"gender":"Female","count":957},{"age":35,"gender":"Female","count":849},{"age":40,"gender":"Female","count":611},{"age":45,"gender":"Female","count":605},{"age":50,"gender":"Female","count":919},{"age":55,"gender":"Female","count":747},{"age":60,"gender":"Female","count":590},{"age":65,"gender":"Female","count":710},{"age":70,"gender":"Female","count":809},{"age":75,"gender":"Female","count":846},{"age":80,"gender":"Female","count":611}];
+            
+            try {
+                const plot = Plot.plot({
+                    marks: [
+                        
+    Plot.dot(data, Plot.stackY2({
+      x: "age",
+      y: d => d.gender === "Male" ? d.count : -d.count,
+      fill: "gender",
+      r: 3
+    })),
+    Plot.tip(data, Plot.pointer({
+      x: "age",
+      title: d => `Age: ${d.age}\nGender: ${d.gender}\nCount: ${d.count}`
+    }))
+  
+                    ],
+                    "grid":true,"width":800,"height":500,"marginLeft":60,"marginBottom":50,"color":{"scheme":"category10","legend":true},"x":{"label":"age"},"y":{"label":"Population"}
+                });
+                
+                document.getElementById("plot").appendChild(plot);
+                console.log("plotR: Interactive plot created successfully!");
+                
+            } catch (error) {
+                console.error("plotR Error:", error);
+                document.getElementById("plot").innerHTML = 
+                    "<div style=\"color: red; padding: 20px;\">Error: " + error.message + "</div>";
+            }
+        }
+        
+        createPlot();
+    </script>
+</body>
+</html>

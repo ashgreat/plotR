@@ -1,0 +1,9 @@
+dependencies:
+  - name: d3
+    version: 7.9.0
+    src: "htmlwidgets/lib/d3"
+    script: "d3.min.js"
+  - name: plot
+    version: 0.6.17
+    src: "htmlwidgets/lib/plot"
+    script: "plot.min.js"
