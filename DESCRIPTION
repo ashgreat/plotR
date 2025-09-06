@@ -3,10 +3,10 @@ Type: Package
 Title: Interactive Data Visualization with Observable Plot
 Version: 1.0.0
 Date: 2025-01-06
-Authors@R: person("Ashish", "Kumar", 
+Authors@R: person("Ashwin", "Malshe", 
                   email = "ashgreat@example.com", 
                   role = c("aut", "cre"))
-Maintainer: Ashish Kumar <ashgreat@example.com>
+Maintainer: Ashwin Malshe <ashgreat@example.com>
 Description: An R interface to Observable Plot, a JavaScript library for 
     exploratory data visualization. Create expressive, interactive charts 
     with a concise grammar of graphics including scatter plots, bar charts, 

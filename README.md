@@ -331,4 +331,4 @@ We welcome contributions! Please see our [Contributing Guidelines](CONTRIBUTING.
 
 ## License
 
-MIT © [Ashish Kumar](https://github.com/ashgreat)
+MIT © [Ashwin Malshe](https://github.com/ashgreat)
